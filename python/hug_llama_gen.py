@@ -2,7 +2,7 @@ from transformers import GPT2Tokenizer
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 # 加载模型和分词器
-model_dir = './python/llama_random'
+model_dir = './llama_random'
 model = AutoModelForCausalLM.from_pretrained(model_dir)
 # tokenizer = AutoTokenizer.from_pretrained("allenai/llama-small")  # 使用合适的分词器
 tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
