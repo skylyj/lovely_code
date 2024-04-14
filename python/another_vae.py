@@ -12,8 +12,8 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 batch_size = 128
 epochs = 10
 raw_dim = 784
+hidden_dim = 400  # 第一层的维度，
 latent_dim = 20  # 隐变量的维度
-hidden_dim = hidden_dim  # 第一层的维度，
 # MNIST Dataset
 transform = transforms.Compose([
     transforms.ToTensor(),
@@ -39,18 +39,16 @@ class VAE(nn.Module):
 
         self.encoder_l1 = nn.Linear(raw_dim, hidden_dim)
         self.encoder_mu = nn.Linear(hidden_dim, latent_dim)  # Mean μ
-        self.encoder_logvarr = nn.Linear(hidden_dim, latent_dim)  # Log variance σ^2
+        self.encoder_logvar = nn.Linear(hidden_dim, latent_dim)  # Log variance σ^2
         self.decoder_l1 = nn.Linear(latent_dim, hidden_dim)
         self.decoder_l2 = nn.Linear(hidden_dim, raw_dim)
 
     def encode(self, x):
         h = F.relu(self.encoder_l1(x))
-        return self.encoder_mu(h), self.encoder_logvarr(h)
+        return self.encoder_mu(h), self.encoder_logvar(h)
 
     def sample_z(self, mu, logvar):
-        # std = torch.exp(0.5 * logvar)  # 标准差
-        var = torch.exp(logvar)  # 标准差
-        std_var = logvar ** 0.5
+        std_var = torch.exp(0.5 * logvar)  # 标准差
         eps = torch.randn_like(std_var)  # 生成一个与std相同大小的张量，值是从标准正态分布中随机抽取的
         return mu + eps * std_var
 
@@ -67,8 +65,6 @@ class VAE(nn.Module):
 # Model, Optimizer, and Loss Function
 model = VAE().to(device)
 optimizer = optim.Adam(model.parameters(), lr=1e-3)
-
-# Loss function
 
 
 def loss_function(recon_x, x, mu, logvar):
