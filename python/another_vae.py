@@ -38,8 +38,8 @@ class VAE(nn.Module):
         # decoder latent_dim -> hidden_dim -> raw_dim
 
         self.encoder_l1 = nn.Linear(raw_dim, hidden_dim)
-        self.encoder_mu = nn.Linear(hidden_dim, latent_dim)  # Mean μ
-        self.encoder_logvar = nn.Linear(hidden_dim, latent_dim)  # Log variance σ^2
+        self.encoder_mu = nn.Linear(hidden_dim, latent_dim)  # Mean
+        self.encoder_logvar = nn.Linear(hidden_dim, latent_dim)  # Log variance
         self.decoder_l1 = nn.Linear(latent_dim, hidden_dim)
         self.decoder_l2 = nn.Linear(hidden_dim, raw_dim)
 
@@ -48,8 +48,8 @@ class VAE(nn.Module):
         return self.encoder_mu(h), self.encoder_logvar(h)
 
     def sample_z(self, mu, logvar):
-        std_var = torch.exp(0.5 * logvar)  # 标准差
-        eps = torch.randn_like(std_var)  # 生成一个与std相同大小的张量，值是从标准正态分布中随机抽取的
+        std_var = torch.exp(0.5 * logvar)
+        eps = torch.randn_like(std_var)
         return mu + eps * std_var
 
     def decode(self, z):
